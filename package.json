@@ -1,0 +1,31 @@
+{
+  "name": "@walery/serverless-plugin-stencil",
+  "description": "Serverless plugin for templating content in serverless.yml files",
+  "version": "0.0.0",
+  "dependencies": {
+    "find-plugins": "1.1.7",
+    "@walery/stencil-aws-account-resolver": "0.0.1",
+    "@walery/stencil-product-bucket": "0.0.1"
+  },
+  "peerDependencies": {
+    "serverless": "^3.0.0"
+  },
+  "files": [
+    "index.js",
+    "lib/"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "Walery Strauch",
+  "license": "MIT",
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/walery/serverless-plugin-stencil/issues"
+  },
+  "homepage": "https://github.com/walery/serverless-plugin-stencil#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walery/serverless-plugin-stencil.git"
+  }
+}
