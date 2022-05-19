@@ -26,13 +26,15 @@ class StencilPlugin {
             throw new serverless.classes.Error(`Please pass exactly one parameter to stencil call. Found ${params.length}: '${params}'.`);
           }
           const stencilAlias = params[0];
+          const blockName = address;
+
           const absoluteModulePath = stcModulePaths[stencilAlias];
           if (absoluteModulePath === undefined) {
             throw new serverless.classes.Error(`Stencil alias with name '${stencilAlias}' not found.`);
           }
           const stencilPath = path.relative(path.join(serviceDir, 'node_modules'), absoluteModulePath);
 
-          const blockResolver = require(path.join('.', stencilPath, 'blocks', `${address}.js`));
+          const blockResolver = require(path.join('.', stencilPath, 'blocks', `${blockName}.js`));
           const resolvedBlock = await blockResolver.resolve({serverless, variableUtils, slsHelper, cliOptions, logUtils});
 
           return {
