@@ -1,5 +1,7 @@
 'use strict';
 
+const { access } = require('node:fs/promises');
+const { constants } = require('node:fs');
 const path = require('path');
 const SlsHelper = require('./lib/slsHelper.js');
 
@@ -17,6 +19,15 @@ class StencilPlugin {
       return acc;
     }, []);
     const slsHelper = new SlsHelper(serverless);
+
+    const isFileAccessible = async (filename) => {
+      try {
+        await access(filename, constants.R_OK);
+        return true;
+      } catch {
+        return false;
+      }
+    };
 
     this.configurationVariablesSources = {
       stencil: {
@@ -36,10 +47,22 @@ class StencilPlugin {
           if (absoluteModulePath === undefined) {
             throw new serverless.classes.Error(`Stencil alias with name '${stencilAlias}' not found.`);
           }
-          const stencilPath = path.relative(path.join(serviceDir, 'node_modules'), absoluteModulePath);
+          const stencilPath = path.relative(serviceDir, absoluteModulePath);
+          const commonBlockFile = path.join('.', stencilPath, 'blocks', `${blockName}`);
 
-          const blockResolver = require(path.join('.', stencilPath, 'blocks', `${blockName}.js`));
-          const resolvedBlock = await blockResolver.resolve({serverless, variableUtils, slsHelper, cliOptions, logUtils});
+          const isJsBlock = await isFileAccessible(`${commonBlockFile}.js`)
+
+
+          let resolvedBlock = null;
+          if (isJsBlock) {
+            const requirePath = path.relative(path.join(serviceDir, 'node_modules'), absoluteModulePath);
+            const jsBlockResolver = require(path.join('.', requirePath, 'blocks', `${blockName}.js`));
+            resolvedBlock = await jsBlockResolver.resolve({serverless, variableUtils, slsHelper, cliOptions, logUtils});
+          }
+
+          if (resolvedBlock === null) {
+            throw new serverless.class.Error(`Block with name '${blockName}' not found for '${stencilAlias}' stencil alias.`);
+          }
 
           return {
             value: resolvedBlock,
