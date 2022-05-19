@@ -32,7 +32,7 @@ class StencilPlugin {
     this.configurationVariablesSources = {
       stencil: {
         async resolve(variableUtils) {
-          const {params, serviceDir, address} = variableUtils;
+          const {params, serviceDir, address, resolveVariable} = variableUtils;
           if (params.length != 1) {
             throw new serverless.classes.Error(`Please pass exactly one parameter to stencil call. Found ${params.length}: '${params}'.`);
           }
@@ -50,10 +50,19 @@ class StencilPlugin {
           const stencilPath = path.relative(serviceDir, absoluteModulePath);
           const commonBlockFile = path.join('.', stencilPath, 'blocks', `${blockName}`);
 
+          const isYmlBlock = await isFileAccessible(`${commonBlockFile}.yml`)
+          const isYamlBlock = await isFileAccessible(`${commonBlockFile}.yaml`)
           const isJsBlock = await isFileAccessible(`${commonBlockFile}.js`)
 
+          // TODO handle case that more than one block is true
 
           let resolvedBlock = null;
+          if (isYmlBlock) {
+            resolvedBlock = await resolveVariable(`file(${commonBlockFile}.yml)`);
+          }
+          if (isYamlBlock) {
+            resolvedBlock = await resolveVariable(`file(${commonBlockFile}.yaml)`);
+          }
           if (isJsBlock) {
             const requirePath = path.relative(path.join(serviceDir, 'node_modules'), absoluteModulePath);
             const jsBlockResolver = require(path.join('.', requirePath, 'blocks', `${blockName}.js`));
