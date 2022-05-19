@@ -28,6 +28,10 @@ class StencilPlugin {
           const stencilAlias = params[0];
           const blockName = address;
 
+          if (blockName === null) {
+            throw new serverless.classes.Error('You must provide block name for stencil alias.');
+          }
+
           const absoluteModulePath = stcModulePaths[stencilAlias];
           if (absoluteModulePath === undefined) {
             throw new serverless.classes.Error(`Stencil alias with name '${stencilAlias}' not found.`);
