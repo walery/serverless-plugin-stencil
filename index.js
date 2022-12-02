@@ -73,6 +73,9 @@ class StencilPlugin {
             throw new serverless.class.Error(`Block with name '${blockName}' not found for '${stencilAlias}' stencil alias.`);
           }
 
+          if(`${blockName}` === 'name' && `${stencilAlias}` === 'account'){
+            resolvedBlock = resolvedBlock.toLowerCase()
+          }
           return {
             value: resolvedBlock,
           };
