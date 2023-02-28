@@ -1,17 +1,17 @@
 'use strict';
 
-const { access } = require('node:fs/promises');
-const { constants } = require('node:fs');
-const path = require('path');
+const {access} = require('node:fs/promises');
+const {constants} = require('node:fs');
+const path = require('node:path');
 const SlsHelper = require('./lib/slsHelper.js');
 
 class StencilPlugin {
   constructor(serverless, cliOptions, logUtils) {
     const stcModules = require('find-plugins')({
       scanAllDirs: true,
-      dir: path.join(process.cwd(), 'node_modules'),
+      dir: path.join(require('node:process').cwd(), 'node_modules'),
       includeDev: true,
-      filter: dep => dep.pkg['@walery/serverless-plugin-stencil']?.alias  // TODO replace by current package name
+      filter: dep => dep.pkg['@walery/serverless-plugin-stencil']?.alias,  // TODO replace by current package name
     });
     const stcModulePaths = stcModules.reduce((acc, currValue) => {
       // TODO check if alias is already in use
@@ -20,7 +20,7 @@ class StencilPlugin {
     }, []);
     const slsHelper = new SlsHelper(serverless);
 
-    const isFileAccessible = async (filename) => {
+    const isFileAccessible = async filename => {
       try {
         await access(filename, constants.R_OK);
         return true;
@@ -33,7 +33,7 @@ class StencilPlugin {
       stencil: {
         async resolve(variableUtils) {
           const {params, serviceDir, address, resolveVariable} = variableUtils;
-          if (params.length != 1) {
+          if (params.length !== 1) {
             throw new serverless.classes.Error(`Please pass exactly one parameter to stencil call. Found ${params.length}: '${params}'.`);
           }
           const stencilAlias = params[0];
@@ -50,9 +50,9 @@ class StencilPlugin {
           const stencilPath = path.relative(serviceDir, absoluteModulePath);
           const commonBlockFile = path.join('.', stencilPath, 'blocks', `${blockName}`);
 
-          const isYmlBlock = await isFileAccessible(`${commonBlockFile}.yml`)
-          const isYamlBlock = await isFileAccessible(`${commonBlockFile}.yaml`)
-          const isJsBlock = await isFileAccessible(`${commonBlockFile}.js`)
+          const isYmlBlock = await isFileAccessible(`${commonBlockFile}.yml`);
+          const isYamlBlock = await isFileAccessible(`${commonBlockFile}.yaml`);
+          const isJsBlock = await isFileAccessible(`${commonBlockFile}.js`);
 
           // TODO handle case that more than one block is true
 
