@@ -1,7 +1,7 @@
 {
   "name": "@walery/serverless-plugin-stencil",
   "description": "Serverless plugin for templating content in serverless.yml files",
-  "version": "0.0.7-SNAPSHOT.0",
+  "version": "0.0.7",
   "dependencies": {
     "find-plugins": "1.1.7",
     "@walery/stencil-aws-account-resolver": "0.0.4",
