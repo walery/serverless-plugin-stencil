@@ -4,8 +4,8 @@
   "version": "0.0.7-SNAPSHOT.0",
   "dependencies": {
     "find-plugins": "1.1.7",
-    "@walery/stencil-aws-account-resolver": "0.0.3",
-    "@walery/stencil-product-bucket": "0.0.3"
+    "@walery/stencil-aws-account-resolver": "0.0.4",
+    "@walery/stencil-product-bucket": "0.0.4"
   },
   "peerDependencies": {
     "serverless": "^3.0.0"
